@@ -37,7 +37,11 @@ VOLUME /container_data
 
 ## 1. Явно создать том и подключить его
 ```
-$ docker volume create --name host_data_with_name --opt type=bind --opt device=/home/jeka/Projects/Docker_example/ex1/host_data --opt o=bind
+$ docker volume create \
+    --name host_data_with_name \
+    --opt type=bind \
+    --opt device=/home/jeka/Projects/Docker_example/ex1/host_data \
+    --opt o=bind
 ```
 
 ### Список примонтированных томов
@@ -79,7 +83,9 @@ $ docker inspect host_data_with_name
 ## 2. Создать Image docker_ex/v1 и передать ARG для инициализации ENV
 ```
 $ cd <folder Dockerfile>
-$ docker build -t docker_ex/v1 --build-arg buildtime_variable=hello --file Dockerfile .
+$ docker build -t docker_ex/v1 \
+    --build-arg buildtime_variable=hello \
+    --file Dockerfile .
 ```
 
 ## 3. Запуск контейнера на основе Image docker_ex/v1 с примонтированной папкой
@@ -89,15 +95,24 @@ $ docker build -t docker_ex/v1 --build-arg buildtime_variable=hello --file Docke
  
 ### Для выполнения скрипта из CMD Dockerfile
 ```
-$ docker run -p 8000:8000 --name name_container_docker_ex_v1 --mount source=host_data_with_name,destination=/container_data -it docker_ex/v1 
+$ docker run -p 8000:8000 \
+    --name name_container_docker_ex_v1 \
+    --mount source=host_data_with_name,destination=/container_data \
+    -it docker_ex/v1 
  
 OUTPUT: ENV_VAR_NAME= hello
 OUTPUT: my_var= hello
 ```
   
-### Для выполнения своего скрипта.Переопределение CMD скрипта на свой ```-c "python my_script.py --my_var hi && ls -l /container_data"```
+### Для выполнения своего скрипта.
+
+Переопределение CMD скрипта на свой ```-c "python my_script.py --my_var hi && ls -l /container_data"```
 ```
-$ docker run -p 8000:8000 --name name_container_docker_ex_v1 --mount source=host_data_with_name,destination=/container_data -it docker_ex/v1 /bin/sh -c "python my_script.py --my_var hi && ls -l /container_data"
+$ docker run -p 8000:8000 \
+    --name name_container_docker_ex_v1 \
+    --mount source=host_data_with_name,destination=/container_data \
+    -it docker_ex/v1 /bin/sh -c "python my_script.py \
+    --my_var hi && ls -l /container_data"
 
 OUTPUT: ENV_VAR_NAME= hello
 OUTPUT: my_var= hi
@@ -115,9 +130,15 @@ drwxr-xr-x    1 root     root          4096 Jul 11 16:42 script
 2. Сможем получить к содержимому контейнера через порт, если пробросить порт <HOST PORT>:<CONTAINER PORT> сможем открыть браузер  http://127.0.0.1:8080/ или `curl 127.0.0.1:8080`
 
 ```
-$ docker run --rm -p 8080:8000 --mount source=host_data_with_name,destination=/container_data --name name_container_docker_ex_v1 -it docker_ex/v1 /bin/sh 
+$ docker run --rm -p 8080:8000 \
+    --mount source=host_data_with_name,destination=/container_data \
+    --name name_container_docker_ex_v1 \
+    -it docker_ex/v1 /bin/sh 
+    
 $ docker exec -it name_container_docker_ex_v1 python my_script.py --my_var hi
+
 $ docker exec -it name_container_docker_ex_v1 /bin/sh (далее вввод команды в консоле)
+
 $ docker container stop name_container_docker_ex_v1
 ```
 
