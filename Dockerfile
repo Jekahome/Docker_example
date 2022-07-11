@@ -59,13 +59,13 @@ VOLUME /container_data
 # Монтирование папки хоста host_data на папку контейнера container_data:
 # --mount source=host_data_with_name,destination=/container_data  
  
-# 3. Отработает CMD
+# 3. Отработает CMD скрипт Dockerfile
 # $ docker run --rm -p 8000:8000 --mount source=host_data_with_name,destination=/container_data -it docker_ex/v1  
 # OUTPUT: ENV_VAR_NAME= hello
 # OUTPUT: my_var= hello
 
   
-# 3. Переопределение CMD на -c "python my_script.py --my_var hi && ls -l /my_volume_dir"
+# 3. Переопределение CMD скрипта на свой ```-c "python my_script.py --my_var hi && ls -l /container_data"```
 # $ docker run --rm -p 8000:8000 --mount source=host_data_with_name,destination=/container_data -it docker_ex/v1 /bin/sh -c "python my_script.py --my_var hi && ls -l /container_data"
 # OUTPUT: ENV_VAR_NAME= hello
 # OUTPUT: my_var= hi
@@ -74,7 +74,7 @@ VOLUME /container_data
 # ...
 
 
-# Если контейнер не завершает работу сразу,а запускает демона
+# Если контейнер не завершает работу сразу,а запускает демона:
 # 1. Сможем выполнять произвольный скрипт используя `docker exec -it <CONTAINER NAME> <BASH COMMAND>` или выполнить через терминал `docker exec -it <CONTAINER NAME> /bin/sh`
 # 2. Сможем получить к содержимому контейнера через порт, если пробросить порт <HOST PORT>:<CONTAINER PORT> сможем открыть браузер  http://127.0.0.1:8080/ или `curl 127.0.0.1:8080`
 

@@ -76,17 +76,18 @@ $ docker inspect host_data_with_name
 ]
 ```
 
-## 2. Создать Image docker_ex/v1
+## 2. Создать Image docker_ex/v1 и передать ARG для инициализации ENV
 ```
+$ cd <folder Dockerfile>
 $ docker build -t docker_ex/v1 --build-arg buildtime_variable=hello --file Dockerfile .
 ```
 
-## Запуск контейнера из Image docker_ex/v1 
+## 3. Запуск контейнера на основе Image docker_ex/v1 с примонтированной папкой
  
 ### Монтирование папки хоста host_data на папку контейнера container_data:
 ``` --mount source=host_data_with_name,destination=/container_data  ```
  
-## 3. Отработает CMD
+### Для выполнения скрипта из CMD Dockerfile
 ```
 $ docker run --rm -p 8000:8000 --mount source=host_data_with_name,destination=/container_data -it docker_ex/v1 
  
@@ -94,7 +95,7 @@ OUTPUT: ENV_VAR_NAME= hello
 OUTPUT: my_var= hello
 ```
   
-## 3. Переопределение CMD на -c "python my_script.py --my_var hi && ls -l /my_volume_dir"
+### Для выполнения своего скрипта.Переопределение CMD скрипта на свой ```-c "python my_script.py --my_var hi && ls -l /container_data"```
 ```
 $ docker run --rm -p 8000:8000 --mount source=host_data_with_name,destination=/container_data -it docker_ex/v1 /bin/sh -c "python my_script.py --my_var hi && ls -l /container_data"
 
