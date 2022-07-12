@@ -1,6 +1,6 @@
 import argparse
 import os
-import http
+
 # python my_script.py --my_var hello
 
 print('ENV_VAR_NAME=',os.environ['ENV_VAR_NAME'])
@@ -20,6 +20,5 @@ else:
     
 os.system("cd ../ && ls -l && cd container_data/ && ls -l") 
 
-# запустить сервер если он еще не запущен  
-# os.system("python3 -m http.server")
+
          

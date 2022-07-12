@@ -22,8 +22,8 @@ ARG buildtime_variable=default_value
 ENV ENV_VAR_NAME=$buildtime_variable 
 
 # Настраиваем команду, которая должна быть запущена в контейнере во время его выполнения
-ENTRYPOINT python /script/my_script.py --my_var ${ENV_VAR_NAME}
-# CMD python ./my_script.py --my_var ${ENV_VAR_NAME}  # можно переопределить при run
+# ENTRYPOINT python /script/my_script.py --my_var ${ENV_VAR_NAME}
+CMD python /script/my_script.py --my_var ${ENV_VAR_NAME}  # можно переопределить при run
 
 # Открываем порты
 EXPOSE 8000
@@ -127,18 +127,30 @@ drwxr-xr-x    1 root     root          4096 Jul 11 16:42 script
 
 1. Сможем выполнять произвольный скрипт используя `docker exec -it <CONTAINER NAME> <BASH COMMAND>` или выполнить через терминал `docker exec -it <CONTAINER NAME> /bin/sh`
 
-2. Сможем получить к содержимому контейнера через порт, если пробросить порт ```<HOST PORT>:<CONTAINER PORT>``` сможем открыть браузер `http://127.0.0.1:8080/` или `curl 127.0.0.1:8080`
+2. Сможем получить связь контейнером через порт, если пробросить порт ```<HOST PORT>:<CONTAINER PORT>``` открыть браузер `http://127.0.0.1:8080/` или `curl 127.0.0.1:8080`
+
+```
+### 1. Запуск демона
 
 ```
 $ docker run --rm -p 8080:8000 \
     --mount source=host_data_with_name,destination=/container_data \
     --name name_container_docker_ex_v1 \
-    -it docker_ex/v1 /bin/sh 
+    -it docker_ex/v1 /bin/sh -c "cd script && python server.py"
     
+OUTPUT:Start server
+OUTPUT:Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ... 
+p.s. 8000 порт это сообщение из контейнера, для хост машины порт будет 8080   
+```
+
+### 2. Выполнение команд в контейнере   
+
+``` 
 $ docker exec -it name_container_docker_ex_v1 python my_script.py --my_var hi
 
 $ docker exec -it name_container_docker_ex_v1 /bin/sh (далее вввод команды в консоле)
 
 $ docker container stop name_container_docker_ex_v1
+```
 ```
 

@@ -6,13 +6,14 @@ RUN apk add --update git
 WORKDIR script
 # Копируем код из локального контекста в рабочую директорию образа /script
 COPY my_script.py .
+COPY server.py .
 # Задаём значение по умолчанию для переменной
 ARG buildtime_variable=default_value
 # переопределить default_value для «buildtime_variable» при сборке
 ENV ENV_VAR_NAME=$buildtime_variable 
 # Настраиваем команду, которая должна быть запущена в контейнере во время его выполнения
-ENTRYPOINT python /script/my_script.py --my_var ${ENV_VAR_NAME}
-# CMD python ./my_script.py --my_var ${ENV_VAR_NAME}  # можно переопределить при run
+#ENTRYPOINT python /script/my_script.py --my_var ${ENV_VAR_NAME}
+CMD python /script/my_script.py --my_var ${ENV_VAR_NAME}  # можно переопределить при run
 # Открываем порты
 EXPOSE 8000
 # Создаём том для хранения данных
@@ -66,7 +67,7 @@ VOLUME /container_data
 
   
 # 3. Переопределение CMD скрипта на свой ```-c "python my_script.py --my_var hi && ls -l /container_data"```
-# $ docker run --rm -p 8000:8000 --mount source=host_data_with_name,destination=/container_data -it docker_ex/v1 /bin/sh -c "python my_script.py --my_var hi && ls -l /container_data"
+# $ docker run --rm -p 8080:8000 --mount source=host_data_with_name,destination=/container_data -it docker_ex/v1 /bin/sh -c "python my_script.py --my_var hi && ls -l /container_data"
 # OUTPUT: ENV_VAR_NAME= hello
 # OUTPUT: my_var= hi
 # drwxrwxr-x    2 1000     1000          4096 Jul 11 16:44 container_data
